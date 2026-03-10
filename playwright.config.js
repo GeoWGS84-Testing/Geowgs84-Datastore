@@ -36,8 +36,9 @@ export default defineConfig({
         storageState: '.auth/user.json',
         viewport: { width: 1920, height: 1080 },
         launchOptions: { args: ['--start-maximized'] }
-      },
+      } // <--- This closes 'use'
+    }, // <--- FIX: This closing brace was missing in your code (closes the project object)
   ],
-
+  
   timeout: 700000
 })
