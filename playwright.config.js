@@ -35,10 +35,11 @@ export default defineConfig({
     {
       name: 'chromium',
       use: {
-        // viewport: null is moved to global use above, or keep here if preferred
+        viewport: { width: 1920, height: 1080 },
+        launchOptions: { args: ['--start-maximized'] }
       }
     }
   ],
 
-  timeout: 1100000
+  timeout: 700000
 })
