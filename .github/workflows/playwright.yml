@@ -40,10 +40,14 @@ jobs:
           key: ${{ runner.os }}-playwright-${{ hashFiles('**/package-lock.json') }}
 
       - name: Install Playwright Browsers
-        run: npx playwright install
+        # FIX: Installs ONLY Chromium and system dependencies (no Firefox/WebKit)
+        # This matches your project configuration and is faster.
+        run: npx playwright install chromium --with-deps
 
       - name: Run Playwright tests
-        run: npx playwright test tests
+        # FIX: Explicitly runs the 'chromium' project defined in playwright.config.js
+        # This ensures 'setup' runs first (due to dependencies), then chromium tests.
+        run: npx playwright test --project=chromium
 
       - name: Upload playwright-report
         if: ${{ !cancelled() }}
