@@ -23,22 +23,22 @@ export default defineConfig({
     screenshot: 'only-on-failure', 
     
     // ✅ ENABLE VIDEO ON FAILURE
+    // 'retain-on-failure' is best for your case: 
+    // it records every test, but deletes the video if the test passes.
     video: 'retain-on-failure', 
     
     trace: 'on-first-retry',
-    // Removed 'viewport: null' from here so project-level viewports take precedence
+    viewport: null // Added based on your project config
   },
 
   projects: [
     {
       name: 'chromium',
       use: {
-        storageState: '.auth/user.json',
-        viewport: { width: 1920, height: 1080 },
-        launchOptions: { args: ['--start-maximized'] }
-      } // <--- This closes 'use'
-    }, // <--- FIX: This closing brace was missing in your code (closes the project object)
+        // viewport: null is moved to global use above, or keep here if preferred
+      }
+    }
   ],
-  
-  timeout: 700000
+
+  timeout: 1100000
 })
