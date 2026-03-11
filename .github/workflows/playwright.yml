@@ -1,54 +1,55 @@
 name: Playwright Tests
 
 on:
+  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
-  schedule:
-    # 10:00 AM IST  = 04:30 UTC
-    - cron: '30 4 * * *'
-    # 10:00 PM IST  = 16:30 UTC
-    - cron: '30 16 * * *'
 
 jobs:
   test:
-    timeout-minutes: 70
+    name: Run Playwright Tests
     runs-on: ubuntu-latest
-
-    env:
-      SMTP_HOST: ${{ secrets.SMTP_HOST }}
-      SMTP_PORT: ${{ secrets.SMTP_PORT }}
-      SMTP_USER: ${{ secrets.SMTP_USER }}
-      SMTP_PASS: ${{ secrets.SMTP_PASS }}
-      # Define the recipient groups using secrets
-      FAILURE_ALERT_EMAILS: ${{ secrets.FAILURE_ALERT_EMAILS }}
-      DAILY_REPORT_EMAILS: ${{ secrets.DAILY_REPORT_EMAILS }}
+    timeout-minutes: 45 # Job timeout
 
     steps:
-      - uses: actions/checkout@v4
+    - name: Checkout repository
+      uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
-        with:
-          node-version: lts/*
-          cache: 'npm'
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20 # Or your preferred Node version (18, 20, etc.)
 
-      - name: Install dependencies
-        run: npm ci
+    - name: Install dependencies
+      run: npm ci
 
-      - name: Cache Playwright browsers
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/ms-playwright
-          key: ${{ runner.os }}-playwright-${{ hashFiles('**/package-lock.json') }}
+    - name: Install Playwright Browsers
+      run: npx playwright install --with-deps
 
-      - name: Install Playwright Browsers
-        run: npx playwright install
+    - name: Run Playwright tests
+      env:
+        # Sets CI=true which your config uses to enable retries and set workers to 1
+        CI: true 
+        # Set your Base URL here or in GitHub Secrets
+        BASE_URL: ${{ secrets.BASE_URL || 'https://datastore.geowgs84.com' }}
+        
+        # If your email reporter needs credentials, uncomment and add these secrets in GitHub Settings
+        # SMTP_HOST: ${{ secrets.SMTP_HOST }}
+        # SMTP_USER: ${{ secrets.SMTP_USER }}
+        # SMTP_PASS: ${{ secrets.SMTP_PASS }}
+      run: npx playwright test
 
-      - name: Run Playwright tests
-        run: npx playwright test tests
+    - name: Upload HTML Report
+      uses: actions/upload-artifact@v4
+      if: always() # Runs even if tests fail
+      with:
+        name: playwright-report
+        path: playwright-report/
+        retention-days: 30
 
-      - name: Upload playwright-report
-        if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: playwright-report
-          path: playwright-report/
-          retention-days: 30
+    - name: Upload Test Results (Videos/Traces)
+      uses: actions/upload-artifact@v4
+      if: failure() # Only uploads if tests fail
+      with:
+        name: test-results
+        path: test-results/
+        retention-days: 30
