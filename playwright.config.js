@@ -1,44 +1,35 @@
 // @ts-check
-import { defineConfig } from '@playwright/test'
-import 'dotenv/config'
+import { defineConfig } from '@playwright/test';
+import 'dotenv/config';
+import EmailReporter from './reporters/email-reporter.cjs';
 
 export default defineConfig({
   testDir: './tests',
-
   fullyParallel: false,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 1 : undefined,
-
-  reporter: [
-    ['list'],
-    ['html'],
-    ['./reporters/email-reporter.cjs']
-  ],
+  timeout: 600000,
+  expect: { timeout: 10000 },
+  
+  reporter: [['html', { open: 'never' }], ['list'], ['./reporters/email-reporter.cjs']],
 
   use: {
-    headless: process.env.CI ? true : false,
-    
-    // ✅ ENABLE SCREENSHOTS ON FAILURE
-    screenshot: 'only-on-failure', 
-    
-    // ✅ ENABLE VIDEO ON FAILURE
-    // 'retain-on-failure' is best for your case: 
-    // it records every test, but deletes the video if the test passes.
-    video: 'retain-on-failure', 
-    
+    baseURL: process.env.BASE_URL,
     trace: 'on-first-retry',
-    viewport: null // Added based on your project config
+    screenshot: 'only-on-failure',
+    video: 'retain-on-failure', 
+    viewport: null, // Full screen
+    actionTimeout: 30000,
   },
 
   projects: [
     {
       name: 'chromium',
       use: {
-        // viewport: null is moved to global use above, or keep here if preferred
-      }
+        viewport: null, 
+        launchOptions: { args: ['--start-maximized'] }
+      },
     }
   ],
-
-  timeout: 1100000
-})
+});
