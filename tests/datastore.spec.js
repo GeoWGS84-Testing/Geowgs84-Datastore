@@ -48,17 +48,17 @@ test.describe('GeoWGS84 Full Suite', () => {
   // Dynamic Product Tests
   const PRODUCT_TESTS = [
     { id: '2', titleSuffix: 'WorldView01', productName: 'WorldView01' },
-    // { id: '2.1', titleSuffix: 'WorldView02', productName: 'WorldView02' },
-    // { id: '2.2', titleSuffix: 'WorldView03', productName: 'WorldView03' },
-    // { id: '2.3', titleSuffix: 'WorldView04', productName: 'WorldView04' },
-    // { id: '2.4', titleSuffix: 'GeoEye1', productName: 'GeoEye1' },
-    // { id: '2.5', titleSuffix: 'QuickBird', productName: 'QuickBird' },
-    // { id: '2.6', titleSuffix: 'IKONOS', productName: 'IKONOS' },
+    { id: '2.1', titleSuffix: 'WorldView02', productName: 'WorldView02' },
+    { id: '2.2', titleSuffix: 'WorldView03', productName: 'WorldView03' },
+    { id: '2.3', titleSuffix: 'WorldView04', productName: 'WorldView04' },
+    { id: '2.4', titleSuffix: 'GeoEye1', productName: 'GeoEye1' },
+    { id: '2.5', titleSuffix: 'QuickBird', productName: 'QuickBird' },
+    { id: '2.6', titleSuffix: 'IKONOS', productName: 'IKONOS' },
     { id: '2.7', titleSuffix: '21AT 30cm Archive', productName: '21AT 30cm Archive' },
-    // { id: '2.8', titleSuffix: '21AT 50cm Archive', productName: '21AT 50cm Archive' },
-    // { id: '2.9', titleSuffix: '21AT 80cm Archive', productName: '21AT 80cm Archive' },
+    { id: '2.8', titleSuffix: '21AT 50cm Archive', productName: '21AT 50cm Archive' },
+    { id: '2.9', titleSuffix: '21AT 80cm Archive', productName: '21AT 80cm Archive' },
     { id: '2.10', titleSuffix: 'WV-Legion01', productName: 'WV-Legion01' },
-    // { id: '2.11', titleSuffix: 'WV-Legion02', productName: 'WV-Legion02' }
+    { id: '2.11', titleSuffix: 'WV-Legion02', productName: 'WV-Legion02' }
   ];
 
   for (const t of PRODUCT_TESTS) {
@@ -287,4 +287,5 @@ test.describe('GeoWGS84 Full Suite', () => {
     await mapPage.showStep('Step 6: Validate Info Window is Gone');
     await expect(mapPage.infoWindow).not.toBeVisible();
   });
+
 });
