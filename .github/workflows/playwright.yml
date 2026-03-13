@@ -1,56 +1,61 @@
 name: Playwright Tests
 
 on:
-  schedule:
-    - cron: '0 10,22 * * *'
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
 jobs:
   test:
-    name: Run Playwright Tests
+    timeout-minutes: 60
     runs-on: ubuntu-latest
-    timeout-minutes: 45 # Job timeout
-
+    
     steps:
-    - name: Checkout repository
+    - name: Checkout Repository
       uses: actions/checkout@v4
 
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: 20 # Or your preferred Node version (18, 20, etc.)
+        node-version: 20
 
-    - name: Install dependencies
+    - name: Install Dependencies
       run: npm ci
 
     - name: Install Playwright Browsers
       run: npx playwright install --with-deps
 
-    - name: Run Playwright tests
+    - name: Run Playwright Tests
       env:
-        # Sets CI=true which your config uses to enable retries and set workers to 1
-        CI: true 
-        # Set your Base URL here or in GitHub Secrets
-        BASE_URL: ${{ secrets.BASE_URL || 'https://datastore.geowgs84.com' }}
-        
-        # If your email reporter needs credentials, uncomment and add these secrets in GitHub Settings
-        # SMTP_HOST: ${{ secrets.SMTP_HOST }}
-        # SMTP_USER: ${{ secrets.SMTP_USER }}
-        # SMTP_PASS: ${{ secrets.SMTP_PASS }}
+        # Pass repository secrets to the environment
+        # These are required for your email-reporter.cjs
+        BASE_URL: ${{ secrets.BASE_URL }}
+        SMTP_HOST: ${{ secrets.SMTP_HOST }}
+        SMTP_PORT: ${{ secrets.SMTP_PORT }}
+        SMTP_SECURE: ${{ secrets.SMTP_SECURE }}
+        SMTP_USER: ${{ secrets.SMTP_USER }}
+        SMTP_PASS: ${{ secrets.SMTP_PASS }}
+        SMTP_FROM: ${{ secrets.SMTP_FROM }}
+        DAILY_REPORT_EMAILS: ${{ secrets.DAILY_REPORT_EMAILS }}
+        FAILURE_ALERT_EMAILS: ${{ secrets.FAILURE_ALERT_EMAILS }}
+        # Optional: Headless mode is default in CI, but explicit is good
+        HEADLESS: 'true'
       run: npx playwright test
 
-    - name: Upload HTML Report
+    - name: Upload Playwright Report
       uses: actions/upload-artifact@v4
-      if: always() # Runs even if tests fail
+      if: always()
       with:
         name: playwright-report
         path: playwright-report/
         retention-days: 30
 
-    - name: Upload Test Results (Videos/Traces)
+    - name: Upload Test Results (Screenshots/Videos)
       uses: actions/upload-artifact@v4
-      if: failure() # Only uploads if tests fail
+      if: always()
       with:
         name: test-results
         path: test-results/
