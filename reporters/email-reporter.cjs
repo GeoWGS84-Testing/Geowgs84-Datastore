@@ -4,6 +4,10 @@ const fs = require('fs')
 const path = require('path')
 const nodemailer = require('nodemailer')
 
+// Logo Configuration
+const LOGO_PATH = path.join(__dirname, '..', 'utils', 'test-data', 'Datastore_Logo.png');
+const LOGO_CID = 'datastore_logo_cid'; // Unique ID for embedding image
+
 function escapeHtml(s = '') { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') }
 
 /**
@@ -170,7 +174,13 @@ class EmailReporter {
       const html = `
         <div style="font-family: 'Segoe UI', Arial, sans-serif; padding: 20px; background-color: #f4f4f4;">
           <div style="max-width: 600px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
-            <h2 style="border-bottom: 2px solid #eee; padding-bottom: 10px;">Dataset Daily Summary</h2>
+            
+            <!-- Logo Header -->
+            <div style="text-align: center; margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 15px;">
+              <img src="cid:${LOGO_CID}" alt="Datastore Logo" style="width: 150px; height: auto; border: 0;" />
+            </div>
+
+            <h2 style="margin-top: 0; color: #333;">Dataset Daily Summary</h2>
             <p>Website testing has completed.</p>
             <table style="width: 100%; text-align: center; margin: 20px 0; border-collapse: collapse;">
               <tr>
@@ -313,14 +323,18 @@ class EmailReporter {
             <style>
                 body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 20px; }
                 .container { max-width: 1100px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-                h2 { color: #333; border-bottom: 2px solid #007bff; padding-bottom: 10px; }
                 table { width: 100%; border-collapse: collapse; margin-top: 20px; }
                 th { background-color: #007bff; color: white; padding: 10px; text-align: left; font-size: 12px; }
             </style>
         </head>
         <body>
             <div class="container">
-                <h2> Dataset Test Execution Report</h2>
+                <!-- Logo Header -->
+                <div style="text-align: center; margin-bottom: 20px; border-bottom: 2px solid #007bff; padding-bottom: 15px;">
+                    <img src="cid:${LOGO_CID}" alt="Datastore Logo" style="width: 150px; height: auto; border: 0; margin-bottom: 10px;" />
+                    <h2 style="margin: 0; color: #333; font-size: 20px;">Dataset Test Execution Report</h2>
+                </div>
+
                 <p>Execution completed at: <strong>${new Date().toLocaleString()}</strong></p>
                 <p style="font-size: 11px; color: #666;">Total attachments: ${(totalSize / (1024*1024)).toFixed(2)} MB / 20 MB</p>
                 
@@ -375,13 +389,27 @@ class EmailReporter {
       auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS }
     })
 
+    // Prepare final attachments list
+    const finalAttachments = [...attachments];
+
+    // Embed Logo if exists
+    if (fs.existsSync(LOGO_PATH)) {
+        finalAttachments.push({
+            filename: 'Datastore_Logo.png',
+            path: LOGO_PATH,
+            cid: LOGO_CID // Referenced in the HTML img src
+        });
+    } else {
+        console.warn(`⚠️ Logo file not found at ${LOGO_PATH}. Email will be sent without the logo image.`);
+    }
+
     const mailOptions = {
       from: process.env.SMTP_FROM || process.env.SMTP_USER,
       to, 
       subject,
       text,
       html,
-      attachments
+      attachments: finalAttachments
     }
     return transporter.sendMail(mailOptions)
   }
