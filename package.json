@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json.schemastore.org/package.json",
+  "name": "demo",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "playwright test --project=chromium",
+    "test:p0": "playwright test -g \"\\[P0\\]\" --project=chromium --workers=1",
+    "test:p1": "playwright test -g \"\\[P1\\]\" --project=chromium --workers=1",
+    "test:p2": "playwright test -g \"\\[P2\\]\" --project=chromium --workers=1",
+    "test:p3": "playwright test -g \"\\[P3\\]\" --project=chromium --workers=1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@playwright/test": "^1.58.2",
+    "@types/node": "^25.3.2",
+    "cross-env": "^10.1.0"
+  },
+  "dependencies": {
+    "dotenv": "^17.3.1",
+    "nodemailer": "^8.0.1"
+  }
+}
