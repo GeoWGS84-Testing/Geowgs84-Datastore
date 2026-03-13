@@ -9,9 +9,9 @@ This repository contains the end-to-end automation test suite for the **GeoWGS84
 ## 📚 Table of Contents
 1. [Test Architecture Overview](#test-architecture-overview)
 2. [Test Suites Breakdown](#test-suites-breakdown)
-   * [1. Shopping Cart & Checkout](#1-shopping-cart--checkout-e2especjs)
-   * [2. Satellite Scenes Validation](#2-satellite-scenes-validation-e2especjs)
-   * [3. Map Interactions & Utilities](#3-map-interactions--utilities-e2especjs)
+   * [1. Shopping Cart & Checkout](#1-shopping-cart--checkout-datastorespecjs)
+   * [2. Satellite Scenes Validation](#2-satellite-scenes-validation-datastorespecjs)
+   * [3. Map Interactions & Utilities](#3-map-interactions--utilities-datastorespecjs)
 3. [Key Logic & Selection Strategies](#key-logic--selection-strategies)
 4. [Visual Flow Diagrams](#visual-flow-diagrams)
 
@@ -28,7 +28,7 @@ The suite follows the **Page Object Model (POM)** to separate test logic from im
 
 ## 🧪 Test Suites Breakdown
 
-### 1. Shopping Cart & Checkout (`e2e.spec.js`)
+### 1. Shopping Cart & Checkout (`datastore.spec.js`)
 
 End-to-end validation of the purchase flow.
 
@@ -53,7 +53,7 @@ End-to-end validation of the purchase flow.
 
 ---
 
-### 2. Satellite Scenes Validation (`e2e.spec.js`)
+### 2. Satellite Scenes Validation (`datastore.spec.js`)
 
 A data-driven suite validating the metadata and imagery previews for multiple satellite constellations.
 
@@ -81,7 +81,7 @@ A data-driven suite validating the metadata and imagery previews for multiple sa
 
 ---
 
-### 3. Map Interactions & Utilities (`e2e.spec.js`)
+### 3. Map Interactions & Utilities (`datastore.spec.js`)
 
 Tests for core GIS functionalities located in the right-hand navigation bar.
 
